@@ -14,38 +14,46 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
+import numpy as np
 
 LOGGER = get_logger(__name__)
 
+
+def classify(instances):
+   classes = model.predict(instances)
 
 def run():
     st.set_page_config(
         page_title="Hello",
         page_icon="👋",
+       # d = {'KNN': ["Nearest Neighbor", "Supervised"], 'Decision Tree': ['Decision Tree', 'Supervised'], 'SVM': ['Support Vector Machine', 'Supervised']}
     )
 
-    st.write("# Welcome to Streamlit! 👋")
+    st.write("# Welcome to the Iris Classifier")
 
-    st.sidebar.success("Select a demo above.")
+    #st.sidebar.success("Select a demo above.")
 
     st.markdown(
         """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
+        This app classifies Iris flowers into four classes:
+        Input the values for each feature to classify your flower
     """
+
+
+
     )
 
+    sepal_length = st.text_input(label='sepal_length')
+    sepal_width = st.text_input(label='sepal_width')
+    petal_length = st.text_input(label='petal_length')
+    petal_width = st.text_input(label='petal_width')
+
+    if st.button(label='Submit'):
+      st.write(f'The values you submitted are: ', sepal_length, sepal_width, petal_length, petal_width)
+      user_iris = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
+      result = classify(user_iris)
+      for i in result:
+         st.write(f'Your iris is if type: {iris_classes[i]}')
 
 if __name__ == "__main__":
     run()
