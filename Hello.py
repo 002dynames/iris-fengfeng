@@ -12,22 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import joblib
 import streamlit as st
 from streamlit.logger import get_logger
 import numpy as np
 
 LOGGER = get_logger(__name__)
 
-
-def classify(instances):
-   classes = model.predict(instances)
-
 def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-       # d = {'KNN': ["Nearest Neighbor", "Supervised"], 'Decision Tree': ['Decision Tree', 'Supervised'], 'SVM': ['Support Vector Machine', 'Supervised']}
-    )
+    # st.set_page_config(
+    #     page_title="Hello",
+    #     page_icon="👋",
+    # )
+
+    # load scaler
+    scaler = joblib.load('iris-scaler.pkl')
+
+    # model
+    model = joblib.load('knn_model.pkl')
 
     st.write("# Welcome to the Iris Classifier")
 
@@ -51,9 +53,19 @@ def run():
     if st.button(label='Submit'):
       st.write(f'The values you submitted are: ', sepal_length, sepal_width, petal_length, petal_width)
       user_iris = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-      result = classify(user_iris)
-      for i in result:
-         st.write(f'Your iris is if type: {iris_classes[i]}')
+      
+      # Scale
+      user_iris_scaled = scaler.transform(user_iris)
+      st.write(f'Scaled Data: {user_iris_scaled}')
+
+      # Use model for prediction
+      results = model.predict(user_iris_scaled)
+
+      st.write(f'The results are: {results}')
+      iris_classes = ['Iris-Setosa', 'Iris-Versicolor', 'Iris-Virginica']
+      for i in results:
+         st.write(f'Your iris is of type: {iris_classes[i]}')
+
 
 if __name__ == "__main__":
     run()
